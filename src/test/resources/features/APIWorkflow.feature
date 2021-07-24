@@ -6,6 +6,10 @@ Feature: Syntax HRMS API Workflow
   Background:
     Given a JWT is generated
 
+  @Random
+  Scenario: Creating Dynamic Employee
+    Given a request is prepared to create employee with dynamic data "Jason","Statham", "Middle", "M", "1966-07-13", "Employee", "Cloud Consultant"
+
   @APIWorkflow
   Scenario: Creating an Employee
     Given a request is prepared to create employee
@@ -22,4 +26,4 @@ Feature: Syntax HRMS API Workflow
     And the retrieved ID "employee.employee_id" matches the globally stored employee ID
     And the retrieved data at "employee" matches the data used to create an employeewith employee ID "employee.employee_id"
       | emp_firstname | emp_middle_name | emp_lastname | emp_birthday | emp_gender | emp_job_title    | emp_status |
-      | Jason         | Middle          | Steitem      | 1966-07-13   | Male       | Cloud Comsultant | Employee   |
+      | Jason         | Middle          | Statham      | 1966-07-13   | Male       | Cloud Consultant | Employee   |

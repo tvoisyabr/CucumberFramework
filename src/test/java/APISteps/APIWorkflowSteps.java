@@ -11,6 +11,7 @@ import io.restassured.specification.RequestSpecification;
 import org.junit.Assert;
 import utils.apiConstants;
 import utils.apiPayloadConstants;
+import utils.apiCommonMethods;
 
 import java.util.List;
 import java.util.Map;
@@ -26,11 +27,7 @@ public class APIWorkflowSteps {
 
     @Given("a request is prepared to create employee")
     public void a_request_is_prepared_to_create_employee() {
-        request = given()
-                .header(apiConstants.Header_Content_type, apiConstants.Content_type)
-                .header(apiConstants.Header_Authorization, GenerateTokenSteps.token)
-                .body(apiPayloadConstants.createEmployeePayload());
-
+        apiCommonMethods.createEmployeeRequest(apiPayloadConstants.createEmployeeBody());
     }
     @When("a POST call is made to create an employee")
     public void a_post_call_is_made_to_create_an_employee() {
@@ -73,25 +70,37 @@ public class APIWorkflowSteps {
         String id = response.jsonPath().getString(employeeIDFromResponse);
         Assert.assertEquals(employee_id, id);
         System.out.println("JUnit ASSERTION PASSED");
-        response.then().body(id, equalTo(employee_id)); //FAILS!!!!!!!??????
+        //response.then().body(id, equalTo(employee_id)); //FAILS!!!!!!!??????
 
     }
     @Then("the retrieved data at {string} matches the data used to create an employeewith employee ID {string}")
     public void the_retrieved_data_at_matches_the_data_used_to_create_an_employeewith_employee_id(String employeeObject, String responseEmployeeID, DataTable dataTable) {
-     /*   List<Map<String, String>> expectedData = dataTable.asMaps(String.class, String.class);
-        List<Map<String, String>> actualData = response.body().jsonPath().get(employeeObject);
+        List<Map<String, String>> expectedData = dataTable.asMaps(String.class, String.class);
+        Map<String, String> actualData = response.body().jsonPath().get(employeeObject);
         int index = 0;
 
         for (Map<String, String> map : expectedData) {
             Set<String> keys = map.keySet();
             for (String key : keys) {
                 String expectedValue = map.get(key);
-                String actualValue = actualData.get(index).get(key);
+                String actualValue = actualData.get(key);
                 Assert.assertEquals(expectedValue, actualValue);
             }
             index++;
         }
         String empID = response.body().jsonPath().getString(responseEmployeeID);
-        Assert.assertEquals(empID, employee_id);*/
+        Assert.assertEquals(empID, employee_id);
+    }
+
+
+    @Given("a request is prepared to create employee with dynamic data {string},{string}, {string}, {string}, {string}, {string}, {string}")
+    public void a_request_is_prepared_to_create_employee_with_dynamic_data(String firstName, String lastName,
+                                                                           String middleName, String empGender, String empBirthday,
+                                                                           String empStatus, String empJobTitle) {
+        request = given()
+                .header(apiConstants.Header_Content_type, apiConstants.Content_type)
+                .header(apiConstants.Header_Authorization, GenerateTokenSteps.token)
+                .body(apiPayloadConstants.createEmployeeDynamic(firstName, lastName, middleName,
+                        empGender, empBirthday, empStatus, empJobTitle));
     }
 }
